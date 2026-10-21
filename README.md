@@ -26,6 +26,7 @@ The optional `seed_demo` command creates the frontend's local guest accounts:
 
 - Customer: `andrey` / `asdasd`
 - Business: `kevin` / `asdasd24`
+- Business seller with three sample offers: `VitaliBanmannSeller` / `asdasd24`
 
 These are public demo credentials for local learning only. Do not use the demo seed or these passwords outside a local development environment. Create an administrator with `python manage.py createsuperuser`.
 

@@ -11,10 +11,31 @@ DEMO_PACKAGES = (
 )
 
 
+SELLER_OFFERS = (
+    (
+        "Website Development",
+        "Responsive websites with HTML, CSS and JavaScript.",
+        ((100, 5, 2), (200, 7, 3), (350, 10, 5)),
+    ),
+    (
+        "REST API with Django",
+        "Backend APIs built with Django REST Framework.",
+        ((150, 5, 2), (300, 8, 3), (500, 12, 5)),
+    ),
+    (
+        "Logo and Branding",
+        "Logo design and a simple brand guide.",
+        ((50, 3, 1), (120, 5, 2), (250, 7, 4)),
+    ),
+)
+PACKAGE_TYPES = ("basic", "standard", "premium")
+
+
 class Command(BaseCommand):
-    help = "Create local-only Coderr demo accounts and a sample offer."
+    help = "Create local-only Coderr demo accounts and sample offers."
 
     def handle(self, *args, **options):
+        self._create_seller_offers()
         self._create_demo_user(
             "andrey", "asdasd", "customer", "andrey@example.test"
         )
@@ -25,6 +46,32 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS("Created local Coderr demo data.")
         )
+
+    def _create_seller_offers(self):
+        seller = self._create_demo_user(
+            "VitaliBanmannSeller",
+            "asdasd24",
+            "business",
+            "seller@example.test",
+        )
+        for title, description, packages in SELLER_OFFERS:
+            if Offer.objects.filter(user=seller, title=title).exists():
+                continue
+            offer = Offer.objects.create(
+                user=seller, title=title, description=description
+            )
+            for kind, (price, days, revisions) in zip(
+                PACKAGE_TYPES, packages
+            ):
+                OfferDetail.objects.create(
+                    offer=offer,
+                    offer_type=kind,
+                    title=kind.title(),
+                    revisions=revisions,
+                    delivery_time_in_days=days,
+                    price=price,
+                    features=["Feature A", "Feature B"],
+                )
 
     def _create_demo_user(self, username, password, user_type, email):
         user, created = User.objects.get_or_create(
