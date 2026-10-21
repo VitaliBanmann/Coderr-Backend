@@ -1,0 +1,19 @@
+[run]
+branch = True
+source =
+    core
+    users_app
+    offers_app
+    orders_app
+    reviews_app
+omit =
+    */__init__.py
+    */admin.py
+    */apps.py
+    */asgi.py
+    */wsgi.py
+    */migrations/*
+    */tests.py
+
+[report]
+show_missing = True
