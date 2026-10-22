@@ -37,6 +37,7 @@ class Command(BaseCommand):
     help = "Create local-only Coderr demo accounts and sample offers."
 
     def handle(self, *args, **options):
+        """Create the demo accounts and sample offers."""
         self._create_seller_offers()
         self._create_demo_user(
             "andrey", "asdasd", "customer", "andrey@example.test"
@@ -50,6 +51,7 @@ class Command(BaseCommand):
         )
 
     def _create_seller_offers(self):
+        """Create the seller account and its sample offers."""
         seller = self._create_demo_user(
             "VitaliBanmannSeller",
             "asdasd24",
@@ -62,6 +64,7 @@ class Command(BaseCommand):
             )
 
     def _create_seller_offer(self, seller, title, description, packages):
+        """Create one seller offer unless it already exists."""
         if Offer.objects.filter(user=seller, title=title).exists():
             return
         offer = Offer.objects.create(
@@ -71,6 +74,7 @@ class Command(BaseCommand):
             self._create_seller_package(offer, kind, values)
 
     def _create_seller_package(self, offer, kind, values):
+        """Create one package for a seller offer."""
         price, days, revisions = values
         OfferDetail.objects.create(
             offer=offer,
@@ -83,6 +87,7 @@ class Command(BaseCommand):
         )
 
     def _create_demo_user(self, username, password, user_type, email):
+        """Return the demo user, creating it with a password if missing."""
         user, created = User.objects.get_or_create(
             username=username,
             defaults={"email": email, "type": user_type},
@@ -93,6 +98,7 @@ class Command(BaseCommand):
         return user
 
     def _create_demo_offer(self, business):
+        """Create the demo offer unless the business already has one."""
         if Offer.objects.filter(user=business).exists():
             return
         offer = Offer.objects.create(
@@ -103,10 +109,12 @@ class Command(BaseCommand):
         self._create_demo_packages(offer)
 
     def _create_demo_packages(self, offer):
+        """Create all demo packages for an offer."""
         for package, price, days in DEMO_PACKAGES:
             self._create_demo_package(offer, package, price, days)
 
     def _create_demo_package(self, offer, package, price, days):
+        """Create one demo package."""
         OfferDetail.objects.create(
             offer=offer,
             offer_type=package,

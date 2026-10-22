@@ -14,16 +14,19 @@ class BaseInfoView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        rating = Review.objects.aggregate(average=Avg("rating"))["average"]
+        """Return public platform statistics."""
         return Response(
             {
                 "review_count": Review.objects.count(),
-                "average_rating": (
-                    round(rating, 1) if rating is not None else 0.0
-                ),
+                "average_rating": self._average_rating(),
                 "business_profile_count": User.objects.filter(
                     type=User.BUSINESS
                 ).count(),
                 "offer_count": Offer.objects.count(),
             }
         )
+
+    def _average_rating(self):
+        """Return the average review rating rounded to one decimal."""
+        rating = Review.objects.aggregate(average=Avg("rating"))["average"]
+        return round(rating, 1) if rating is not None else 0.0

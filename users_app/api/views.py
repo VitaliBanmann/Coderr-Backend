@@ -16,6 +16,7 @@ from users_app.models import User
 
 
 def token_payload(user):
+    """Return the login response data including the user's token."""
     token, _ = Token.objects.get_or_create(user=user)
     return {
         "token": token.key,
@@ -32,6 +33,7 @@ class RegistrationView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request):
+        """Register the user and return the token payload."""
         user = self._create_user(request.data)
         return Response(
             token_payload(user),
@@ -39,6 +41,7 @@ class RegistrationView(generics.CreateAPIView):
         )
 
     def _create_user(self, data):
+        """Validate the registration data and save the user."""
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         return serializer.save()
@@ -50,6 +53,7 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """Authenticate the credentials and return the token payload."""
         user = authenticate(
             request,
             username=request.data.get("username"),
@@ -60,6 +64,7 @@ class LoginView(APIView):
         return Response(token_payload(user))
 
     def _invalid_credentials(self):
+        """Build the 400 response for failed authentication."""
         return Response(
             {"non_field_errors": ["Invalid username or password."]},
             status=status.HTTP_400_BAD_REQUEST,
@@ -82,9 +87,11 @@ class ProfileListView(generics.ListAPIView):
     pagination_class = None
 
     def get_serializer_class(self):
+        """Choose the serializer matching the requested profile type."""
         if self.kwargs["profile_type"] == User.BUSINESS:
             return BusinessProfileListSerializer
         return CustomerProfileListSerializer
 
     def get_queryset(self):
+        """Return the users of the requested profile type."""
         return User.objects.filter(type=self.kwargs["profile_type"])

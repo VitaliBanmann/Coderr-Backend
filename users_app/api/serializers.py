@@ -26,6 +26,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
+        """Check that the passwords match and satisfy Django's validators."""
         if attrs["password"] != attrs["repeated_password"]:
             raise serializers.ValidationError(
                 {"repeated_password": "Passwords do not match."}
@@ -39,6 +40,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        """Create the user with a hashed password."""
         validated_data.pop("repeated_password")
         return User.objects.create_user(**validated_data)
 
@@ -121,6 +123,7 @@ class CustomerProfileListSerializer(serializers.ModelSerializer):
         ]
 
     def get_uploaded_at(self, user):
+        """Return the profile image's modification time in UTC."""
         if not user.profile_image:
             return None
         uploaded_at = user.profile_image.storage.get_modified_time(

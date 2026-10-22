@@ -32,4 +32,5 @@ class Review(models.Model):
         ]
 
     def __str__(self):
+        """Return the rating with the reviewed business."""
         return f"{self.rating}/5 for {self.business_user}"

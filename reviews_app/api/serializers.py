@@ -26,6 +26,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "reviewer", "created_at", "updated_at"]
 
     def validate_rating(self, value):
+        """Ensure the rating is between 1 and 5."""
         if value < 1 or value > 5:
             raise serializers.ValidationError(
                 "Rating must be between 1 and 5."
@@ -33,6 +34,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        """Protect the reviewed business and enforce one review per user."""
         if self.instance is not None and "business_user" in attrs:
             self._raise_immutable_business_error()
         if self.instance is None:
@@ -40,11 +42,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         return attrs
 
     def _raise_immutable_business_error(self):
+        """Reject changes to the reviewed business."""
         raise serializers.ValidationError(
             {"business_user": "The reviewed business cannot be changed."}
         )
 
     def _validate_single_review(self, attrs):
+        """Reject a second review of the same business by one user."""
         exists = Review.objects.filter(
             business_user=attrs["business_user"],
             reviewer=self.context["request"].user,

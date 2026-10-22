@@ -26,4 +26,5 @@ class User(AbstractUser):
         verbose_name_plural = "users"
 
     def __str__(self):
+        """Return the username."""
         return self.username

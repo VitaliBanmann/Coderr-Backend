@@ -42,4 +42,5 @@ class Order(models.Model):
         verbose_name_plural = "orders"
 
     def __str__(self):
+        """Return the order title with its status."""
         return f"{self.title} ({self.status})"

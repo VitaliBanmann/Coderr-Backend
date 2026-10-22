@@ -26,29 +26,34 @@ class OrderListCreateView(generics.ListCreateAPIView):
     pagination_class = None
 
     def get_serializer_class(self):
+        """Use the creation serializer for POST, otherwise the read one."""
         if self.request.method == "POST":
             return CreateOrderSerializer
         return OrderSerializer
 
     def get_permissions(self):
+        """Require a customer for POST in addition to authentication."""
         permissions = [IsAuthenticated()]
         if self.request.method == "POST":
             permissions.append(IsCustomer())
         return permissions
 
     def get_queryset(self):
+        """Return only orders the requesting user takes part in."""
         user = self.request.user
         return Order.objects.filter(
             Q(customer_user=user) | Q(business_user=user)
         ).select_related("customer_user", "business_user")
 
     def create(self, request):
+        """Create an order and respond with its full representation."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save()
         return self._created_response(order)
 
     def _created_response(self, order):
+        """Build the 201 response for a newly created order."""
         data = OrderSerializer(order).data
         return Response(data, status=status.HTTP_201_CREATED)
 
@@ -61,6 +66,7 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     http_method_names = ["get", "patch", "delete", "head", "options"]
 
     def get_permissions(self):
+        """Choose permissions per HTTP method."""
         if self.request.method == "DELETE":
             return [IsAdminUser()]
         if self.request.method == "PATCH":
@@ -68,6 +74,7 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         return [IsAuthenticated(), IsOrderParticipant()]
 
     def get_serializer_class(self):
+        """Use the status serializer for PATCH, otherwise the full one."""
         if self.request.method == "PATCH":
             return OrderStatusSerializer
         return OrderSerializer
@@ -81,6 +88,7 @@ class BusinessOrderCountView(APIView):
     order_status = Order.Status.IN_PROGRESS
 
     def get(self, _request, business_user_id):
+        """Count the business user's orders in the configured status."""
         business_user = get_object_or_404(
             User, pk=business_user_id, type=User.BUSINESS
         )

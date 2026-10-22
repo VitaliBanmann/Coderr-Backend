@@ -22,6 +22,7 @@ class Offer(models.Model):
         verbose_name_plural = "offers"
 
     def __str__(self):
+        """Return the offer title."""
         return self.title
 
 
@@ -57,4 +58,5 @@ class OfferDetail(models.Model):
         ]
 
     def __str__(self):
+        """Return the offer title with the package type."""
         return f"{self.offer.title} ({self.offer_type})"

@@ -33,12 +33,14 @@ class CreateOrderSerializer(serializers.Serializer):
     offer_detail_id = serializers.IntegerField()
 
     def validate_offer_detail_id(self, value):
+        """Ensure the referenced offer package exists."""
         if not OfferDetail.objects.filter(pk=value).exists():
             raise serializers.ValidationError("Offer detail not found.")
         return value
 
     @transaction.atomic
     def create(self, validated_data):
+        """Create an order that snapshots the selected offer package."""
         detail = OfferDetail.objects.select_related("offer__user").get(
             pk=validated_data["offer_detail_id"]
         )
@@ -49,6 +51,7 @@ class CreateOrderSerializer(serializers.Serializer):
         )
 
     def _package_snapshot(self, detail):
+        """Copy the order-relevant package fields into a dictionary."""
         fields = [
             "title",
             "revisions",
