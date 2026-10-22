@@ -1,5 +1,5 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from reviews_app.api.permissions import IsCustomer, IsReviewAuthorOrReadOnly

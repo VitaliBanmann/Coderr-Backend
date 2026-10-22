@@ -94,12 +94,16 @@ class OrderApiTests(APITestCase):
             self.client.get(f"/api/orders/{self.order.pk}/").status_code,
             403,
         )
-        self.assertEqual(
-            self.client.post(
-                "/api/orders/", {"offer_detail_id": 999999}, format="json"
-            ).status_code,
-            400,
+        missing_detail = self.client.post(
+            "/api/orders/", {"offer_detail_id": 999999}, format="json"
         )
+        self.assertEqual(missing_detail.status_code, 404)
+        invalid_detail_id = self.client.post(
+            "/api/orders/",
+            {"offer_detail_id": "not-an-id"},
+            format="json",
+        )
+        self.assertEqual(invalid_detail_id.status_code, 400)
 
     def test_order_status_validation_and_unknown_business_count(self):
         self.client.force_authenticate(self.business)
@@ -109,6 +113,14 @@ class OrderApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(invalid.status_code, 400)
+        unallowed_field = self.client.patch(
+            f"/api/orders/{self.order.pk}/",
+            {"status": "completed", "title": "Changed title"},
+            format="json",
+        )
+        self.assertEqual(unallowed_field.status_code, 400)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, Order.Status.IN_PROGRESS)
         self.assertEqual(
             self.client.get("/api/order-count/999999/").status_code,
             404,

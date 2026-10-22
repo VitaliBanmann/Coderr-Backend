@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from offers_app.models import Offer, OfferDetail
 from users_app.models import User
 
-
 DEMO_PACKAGES = (
     ("basic", 100, 5),
     ("standard", 200, 7),

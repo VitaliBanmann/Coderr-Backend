@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 
 from offers_app.models import OfferDetail
 from orders_app.models import Order
@@ -35,7 +36,7 @@ class CreateOrderSerializer(serializers.Serializer):
     def validate_offer_detail_id(self, value):
         """Ensure the referenced offer package exists."""
         if not OfferDetail.objects.filter(pk=value).exists():
-            raise serializers.ValidationError("Offer detail not found.")
+            raise NotFound("Offer detail not found.")
         return value
 
     @transaction.atomic
@@ -72,3 +73,15 @@ class OrderStatusSerializer(serializers.ModelSerializer):
         read_only_fields = [
             field for field in OrderSerializer.Meta.fields if field != "status"
         ]
+
+    def validate(self, attrs):
+        """Reject input fields other than the order status."""
+        unexpected_fields = set(self.initial_data) - {"status"}
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                {
+                    field: "Only the status field can be updated."
+                    for field in sorted(unexpected_fields)
+                }
+            )
+        return attrs

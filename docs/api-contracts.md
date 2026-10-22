@@ -28,7 +28,7 @@ The project apps use normal Django migrations. Apply them with
 ## Orders
 
 - `GET orders/`: returns only orders belonging to the authenticated customer or business user.
-- `POST orders/`: customer users only; accepts `offer_detail_id` and snapshots the selected package into a new `in_progress` order.
+- `POST orders/`: customer users only; accepts `offer_detail_id` and snapshots the selected package into a new `in_progress` order. A missing or malformed ID returns `400`; an ID that does not identify an existing package returns `404`.
 - `GET orders/{id}/`: authenticated order detail.
 - `PATCH orders/{id}/`: only the owning business user may update `status` (`in_progress`, `completed` or `cancelled`).
 - `DELETE orders/{id}/`: staff users only; returns `204`.
@@ -37,7 +37,7 @@ The project apps use normal Django migrations. Apply them with
 ## Reviews and platform statistics
 
 - `GET reviews/`: authenticated list, filterable by `business_user_id` and `reviewer_id`, sortable by `updated_at` or `rating`.
-- `POST reviews/`: authenticated customer users only. A customer may review a business profile once; the reviewer identity comes from the token.
+- `POST reviews/`: authenticated customer users only. A customer may review a business profile once; the reviewer identity comes from the token. Duplicate reviews are rejected with `400`; a non-customer receives `403`.
 - `GET reviews/{id}/`: authenticated detail. `PATCH` and `DELETE` are restricted to the review author; deletion returns `204`.
 - `GET base-info/`: public counts and the average rating rounded to one decimal place; an empty review set returns `0.0`.
 

@@ -7,11 +7,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from offers_app.api.permissions import IsBusinessUser, IsOfferOwnerOrReadOnly
-from offers_app.api.serializers import (
-    OfferDetailSerializer,
-    OfferListSerializer,
-    OfferWriteSerializer,
-)
+from offers_app.api.serializers import (OfferDetailSerializer,
+                                        OfferListSerializer,
+                                        OfferWriteSerializer)
 from offers_app.models import Offer, OfferDetail
 
 

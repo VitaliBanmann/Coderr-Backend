@@ -6,12 +6,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users_app.api.permissions import IsProfileOwnerOrReadOnly
-from users_app.api.serializers import (
-    BusinessProfileListSerializer,
-    CustomerProfileListSerializer,
-    ProfileSerializer,
-    RegistrationSerializer,
-)
+from users_app.api.serializers import (BusinessProfileListSerializer,
+                                       CustomerProfileListSerializer,
+                                       ProfileSerializer,
+                                       RegistrationSerializer)
 from users_app.models import User
 
 

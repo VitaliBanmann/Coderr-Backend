@@ -1,20 +1,14 @@
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from orders_app.api.permissions import (
-    IsBusinessOrderOwner,
-    IsCustomer,
-    IsOrderParticipant,
-)
-from orders_app.api.serializers import (
-    CreateOrderSerializer,
-    OrderSerializer,
-    OrderStatusSerializer,
-)
+from orders_app.api.permissions import (IsBusinessOrderOwner, IsCustomer,
+                                        IsOrderParticipant)
+from orders_app.api.serializers import (CreateOrderSerializer, OrderSerializer,
+                                        OrderStatusSerializer)
 from orders_app.models import Order
 from users_app.models import User
 
