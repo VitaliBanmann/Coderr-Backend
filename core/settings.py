@@ -29,13 +29,6 @@ INSTALLED_APPS = [
     "orders_app",
     "reviews_app",
 ]
-MIGRATION_MODULES = {
-    "users_app": None,
-    "offers_app": None,
-    "orders_app": None,
-    "reviews_app": None,
-}
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

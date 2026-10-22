@@ -15,7 +15,7 @@ This repository contains the Django REST Framework API for the Coderr freelancer
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python manage.py migrate --run-syncdb
+python manage.py migrate
 python manage.py seed_demo
 python manage.py runserver
 ```
@@ -62,8 +62,8 @@ python -m pycodestyle .
 python manage.py check
 ```
 
-The project apps intentionally have no migration scripts; local setup uses
-`migrate --run-syncdb` to create their tables.
+The project apps include Django migrations. Run `python manage.py migrate` to
+create and update their database tables.
 
 The coverage configuration omits Django-generated migrations and framework
 bootstrap/admin boilerplate; the API and project logic are covered by the test

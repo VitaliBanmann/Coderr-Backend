@@ -7,6 +7,9 @@ profile-list field `uploaded_at` is the stored profile image's modification
 time, formatted as `YYYY-MM-DDTHH:mm:ss` without a timezone suffix; it is null
 when no profile image is set.
 
+The project apps use normal Django migrations. Apply them with
+`python manage.py migrate` before running the API.
+
 ## Authentication and profiles
 
 - `POST registration/`: creates a customer or business account; `username`, `email`, `password`, `repeated_password` and `type` are required. Returns a token and user identity with `201`.
