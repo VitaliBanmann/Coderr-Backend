@@ -1,5 +1,8 @@
+from datetime import timezone as datetime_timezone
+
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils import timezone
 from rest_framework import serializers
 
 from users_app.models import User
@@ -70,3 +73,50 @@ class ProfileSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["username", "type", "created_at"]
+
+
+class BusinessProfileListSerializer(serializers.ModelSerializer):
+    user = serializers.IntegerField(source="pk", read_only=True)
+    file = serializers.ImageField(source="profile_image", read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+
+
+class CustomerProfileListSerializer(serializers.ModelSerializer):
+    user = serializers.IntegerField(source="pk", read_only=True)
+    file = serializers.ImageField(source="profile_image", read_only=True)
+    uploaded_at = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "uploaded_at",
+            "type",
+        ]
+
+    def get_uploaded_at(self, user):
+        if not user.profile_image:
+            return None
+        uploaded_at = user.profile_image.storage.get_modified_time(
+            user.profile_image.name
+        )
+        uploaded_at = timezone.localtime(uploaded_at, datetime_timezone.utc)
+        return uploaded_at.strftime("%Y-%m-%dT%H:%M:%S")

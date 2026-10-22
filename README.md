@@ -15,7 +15,7 @@ This repository contains the Django REST Framework API for the Coderr freelancer
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python manage.py migrate
+python manage.py migrate --run-syncdb
 python manage.py seed_demo
 python manage.py runserver
 ```
@@ -47,7 +47,10 @@ All routes use the `/api/` prefix. Token authentication uses the `Authorization:
 | Reviews | `GET/POST reviews/`, `GET/PATCH/DELETE reviews/{id}/` |
 | Platform statistics | `GET base-info/` |
 
-The offer list uses page-number pagination with six results per page. See [`docs/api-contracts.md`](docs/api-contracts.md) for the implemented request and permission rules.
+The offer list uses page-number pagination with six results per page by default; `page_size` can request up to 100 results per page. See [`docs/api-contracts.md`](docs/api-contracts.md) for the implemented request and permission rules.
+
+A Postman example for the offer package PATCH request is available at
+[`docs/postman/Coderr-Offer-PATCH.postman_collection.json`](docs/postman/Coderr-Offer-PATCH.postman_collection.json).
 
 ## Tests and migrations
 
@@ -56,9 +59,11 @@ python manage.py test
 python -m coverage run manage.py test
 python -m coverage report
 python -m pycodestyle .
-python manage.py makemigrations --check --dry-run
 python manage.py check
 ```
+
+The project apps intentionally have no migration scripts; local setup uses
+`migrate --run-syncdb` to create their tables.
 
 The coverage configuration omits Django-generated migrations and framework
 bootstrap/admin boilerplate; the API and project logic are covered by the test

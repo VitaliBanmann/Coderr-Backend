@@ -25,6 +25,7 @@ class ReviewApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 201)
+        self._assert_utc_timestamps(response.data)
         duplicate = self.client.post(
             "/api/reviews/",
             {
@@ -43,12 +44,24 @@ class ReviewApiTests(APITestCase):
         )
         self.assertEqual(updated.status_code, 200)
         self.assertEqual(updated.data["rating"], 5)
+        self._assert_utc_timestamps(updated.data)
+        detail = self.client.get(f"/api/reviews/{review.pk}/")
+        listing = self.client.get("/api/reviews/")
+        self._assert_utc_timestamps(detail.data)
+        self._assert_utc_timestamps(listing.data[0])
         immutable_business = self.client.patch(
             f"/api/reviews/{review.pk}/",
             {"business_user": self.customer.pk},
             format="json",
         )
         self.assertEqual(immutable_business.status_code, 400)
+
+    def _assert_utc_timestamps(self, data):
+        pattern = (
+            r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$"
+        )
+        for field in ("created_at", "updated_at"):
+            self.assertRegex(data[field], pattern)
 
     def test_business_cannot_review_and_only_author_deletes(self):
         review = Review.objects.create(

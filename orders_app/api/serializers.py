@@ -59,4 +59,7 @@ class CreateOrderSerializer(serializers.Serializer):
 class OrderStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ["status"]
+        fields = OrderSerializer.Meta.fields
+        read_only_fields = [
+            field for field in OrderSerializer.Meta.fields if field != "status"
+        ]

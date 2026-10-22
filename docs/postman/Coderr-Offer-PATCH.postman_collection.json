@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "Coderr - Offer PATCH",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Update an offer package",
+      "request": {
+        "method": "PATCH",
+        "auth": {
+          "type": "apikey",
+          "apikey": [
+            {
+              "key": "key",
+              "value": "Authorization",
+              "type": "string"
+            },
+            {
+              "key": "value",
+              "value": "Token {{token}}",
+              "type": "string"
+            },
+            {
+              "key": "in",
+              "value": "header",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"details\": [\n    {\n      \"id\": {{offer_detail_id}},\n      \"title\": \"Updated Basic Design\",\n      \"revisions\": 3,\n      \"delivery_time_in_days\": 6,\n      \"price\": 120,\n      \"features\": [\"Logo Design\", \"Flyer\"],\n      \"offer_type\": \"basic\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/offers/{{offer_id}}/"
+        },
+        "description": "Every nested package update must include offer_type. If id is provided, it must identify that same package."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "offer_id",
+      "value": "1"
+    },
+    {
+      "key": "offer_detail_id",
+      "value": "1"
+    }
+  ]
+}

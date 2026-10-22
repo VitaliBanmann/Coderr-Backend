@@ -56,6 +56,12 @@ class OrderApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(allowed.status_code, 200)
+        self.assertEqual(allowed.data["status"], "completed")
+        self.assertEqual(allowed.data["customer_user"], self.customer.pk)
+        self.assertRegex(
+            allowed.data["created_at"],
+            r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$",
+        )
         self.client.force_authenticate(self.customer)
         denied = self.client.patch(
             f"/api/orders/{self.order.pk}/",

@@ -29,6 +29,12 @@ INSTALLED_APPS = [
     "orders_app",
     "reviews_app",
 ]
+MIGRATION_MODULES = {
+    "users_app": None,
+    "offers_app": None,
+    "orders_app": None,
+    "reviews_app": None,
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -89,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Europe/Berlin"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "static/"

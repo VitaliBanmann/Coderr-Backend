@@ -2,18 +2,24 @@
 
 The source of truth is the supplied Coderr API endpoint document. The routes below are relative to `/api/`. Unless stated otherwise, protected routes require a DRF token in `Authorization: Token <token>`.
 
+Timestamp fields use ISO-8601 UTC values with a trailing `Z`. The customer
+profile-list field `uploaded_at` is the stored profile image's modification
+time, formatted as `YYYY-MM-DDTHH:mm:ss` without a timezone suffix; it is null
+when no profile image is set.
+
 ## Authentication and profiles
 
 - `POST registration/`: creates a customer or business account; `username`, `email`, `password`, `repeated_password` and `type` are required. Returns a token and user identity with `201`.
 - `POST login/`: authenticates with `username` and `password`; returns a token and user identity with `200`.
 - `GET profile/{pk}/`: retrieves an authenticated user's profile. `PATCH` is restricted to the profile owner. Empty profile text fields serialize as empty strings; uploaded profile images use `file`.
-- `GET profiles/business/` and `GET profiles/customer/`: authenticated profile arrays, without pagination.
+- `GET profiles/business/`: authenticated, unpaginated profile arrays with `user`, `username`, names, image, and business profile fields.
+- `GET profiles/customer/`: authenticated, unpaginated profile arrays with `user`, `username`, names, image, `uploaded_at`, and `type`.
 
 ## Offers
 
-- `GET offers/`: public page-number-paginated results (six per page), with `creator_id`, `min_price`, `max_delivery_time`, `search`, and `ordering` filters. Results include package-detail links, the lowest price, the shortest delivery time, and creator information.
+- `GET offers/`: public page-number-paginated results (six per page by default, configurable with `page_size` up to 100), with `creator_id`, `min_price`, `max_delivery_time`, `search`, and `ordering` filters. Results include absolute package-detail links, the lowest price, the shortest delivery time, and creator information.
 - `POST offers/`: business users only. A new offer must provide exactly one each of `basic`, `standard`, and `premium` package details.
-- `GET offers/{id}/`: authenticated offer detail. `PATCH` and `DELETE` are restricted to its owner. Nested partial updates preserve detail IDs and accept detail IDs and/or their `offer_type`.
+- `GET offers/{id}/`: authenticated offer detail. `PATCH` and `DELETE` are restricted to its owner. Nested partial updates preserve detail IDs; each updated detail must include its `offer_type`, and may include its ID.
 - `GET offerdetails/{id}/`: authenticated package detail.
 
 ## Orders

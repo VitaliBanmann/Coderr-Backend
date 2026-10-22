@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Min, Q
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from offers_app.api.permissions import IsBusinessUser, IsOfferOwnerOrReadOnly
@@ -21,9 +22,16 @@ def annotate_offer_aggregates(queryset):
     )
 
 
+class OfferPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class OfferListCreateView(generics.ListCreateAPIView):
     queryset = Offer.objects.select_related("user").prefetch_related("details")
     permission_classes = [AllowAny]
+    pagination_class = OfferPagination
 
     def get_serializer_class(self):
         if self.request.method == "POST":

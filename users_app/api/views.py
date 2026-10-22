@@ -6,7 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users_app.api.permissions import IsProfileOwnerOrReadOnly
-from users_app.api.serializers import ProfileSerializer, RegistrationSerializer
+from users_app.api.serializers import (
+    BusinessProfileListSerializer,
+    CustomerProfileListSerializer,
+    ProfileSerializer,
+    RegistrationSerializer,
+)
 from users_app.models import User
 
 
@@ -65,9 +70,13 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 class ProfileListView(generics.ListAPIView):
-    serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
+
+    def get_serializer_class(self):
+        if self.kwargs["profile_type"] == User.BUSINESS:
+            return BusinessProfileListSerializer
+        return CustomerProfileListSerializer
 
     def get_queryset(self):
         return User.objects.filter(type=self.kwargs["profile_type"])

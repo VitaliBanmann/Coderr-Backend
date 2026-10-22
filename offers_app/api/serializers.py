@@ -45,7 +45,17 @@ class OfferWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
     def validate_details(self, details):
-        types = [detail["offer_type"] for detail in details]
+        if self.instance is not None and any(
+            "offer_type" not in detail for detail in details
+        ):
+            raise serializers.ValidationError(
+                "Each updated detail must include offer_type."
+            )
+        types = [
+            detail["offer_type"]
+            for detail in details
+            if "offer_type" in detail
+        ]
         self._validate_detail_types(types, details)
         return details
 
@@ -114,7 +124,12 @@ class OfferWriteSerializer(serializers.ModelSerializer):
             return detail
         if detail_id:
             raise serializers.ValidationError(
-                {"details": "The detail does not belong to this offer."}
+                {
+                    "details": (
+                        "Detail ID and offer_type must identify an existing "
+                        "detail for this offer."
+                    )
+                }
             )
         raise serializers.ValidationError(
             {"details": "Updates must refer to an existing offer detail."}
@@ -122,7 +137,9 @@ class OfferWriteSerializer(serializers.ModelSerializer):
 
     def _find_existing_detail(self, offer, detail_id, offer_type):
         if detail_id:
-            return offer.details.filter(pk=detail_id).first()
+            return offer.details.filter(
+                pk=detail_id, offer_type=offer_type
+            ).first()
         return offer.details.filter(offer_type=offer_type).first()
 
 

@@ -55,23 +55,30 @@ class Command(BaseCommand):
             "seller@example.test",
         )
         for title, description, packages in SELLER_OFFERS:
-            if Offer.objects.filter(user=seller, title=title).exists():
-                continue
-            offer = Offer.objects.create(
-                user=seller, title=title, description=description
+            self._create_seller_offer(
+                seller, title, description, packages
             )
-            for kind, (price, days, revisions) in zip(
-                PACKAGE_TYPES, packages
-            ):
-                OfferDetail.objects.create(
-                    offer=offer,
-                    offer_type=kind,
-                    title=kind.title(),
-                    revisions=revisions,
-                    delivery_time_in_days=days,
-                    price=price,
-                    features=["Feature A", "Feature B"],
-                )
+
+    def _create_seller_offer(self, seller, title, description, packages):
+        if Offer.objects.filter(user=seller, title=title).exists():
+            return
+        offer = Offer.objects.create(
+            user=seller, title=title, description=description
+        )
+        for kind, values in zip(PACKAGE_TYPES, packages):
+            self._create_seller_package(offer, kind, values)
+
+    def _create_seller_package(self, offer, kind, values):
+        price, days, revisions = values
+        OfferDetail.objects.create(
+            offer=offer,
+            offer_type=kind,
+            title=kind.title(),
+            revisions=revisions,
+            delivery_time_in_days=days,
+            price=price,
+            features=["Feature A", "Feature B"],
+        )
 
     def _create_demo_user(self, username, password, user_type, email):
         user, created = User.objects.get_or_create(

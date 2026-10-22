@@ -91,6 +91,34 @@ class OfferApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(detail.pk, response.data["details"][0]["id"])
         self.assertEqual(detail.title, "Updated basic")
+        response = self.client.patch(
+            f"/api/offers/{offer.pk}/",
+            {
+                "details": [
+                    {"offer_type": "basic", "title": "Updated by type"}
+                ]
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["details"][0]["id"], detail.pk)
+        detail.refresh_from_db()
+        self.assertEqual(detail.title, "Updated by type")
+        response = self.client.patch(
+            f"/api/offers/{offer.pk}/",
+            {
+                "details": [
+                    {
+                        "id": detail.pk,
+                        "title": "Updated without offer type",
+                    }
+                ]
+            },
+            format="json",
+        )
+        detail.refresh_from_db()
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(detail.title, "Updated by type")
 
     def test_offer_detail_requires_authentication(self):
         offer = self._create_offer()
@@ -101,6 +129,11 @@ class OfferApiTests(APITestCase):
         offer = self._create_offer()
         self.assertEqual(str(offer), "API testing")
         self.assertEqual(str(offer.details.first()), "API testing (basic)")
+        listing = self.client.get("/api/offers/")
+        self.assertRegex(
+            listing.data["results"][0]["created_at"],
+            r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$",
+        )
         frontend_query = self.client.get(
             "/api/offers/?creator_id=&search=&ordering=&page=1"
             "&max_delivery_time="
@@ -128,6 +161,14 @@ class OfferApiTests(APITestCase):
         self.assertEqual(details.data["price"], 100.0)
         deleted = self.client.delete(f"/api/offers/{offer.pk}/")
         self.assertEqual(deleted.status_code, 204)
+
+    def test_offer_page_size_query_parameter_limits_results(self):
+        self._create_offer()
+        self._create_offer()
+        response = self.client.get("/api/offers/?page_size=1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_offer_filters_and_missing_or_foreign_details_are_rejected(self):
         offer = self._create_offer()
@@ -164,6 +205,20 @@ class OfferApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(foreign_update.status_code, 400)
+        mismatched_update = self.client.patch(
+            f"/api/offers/{offer.pk}/",
+            {
+                "details": [
+                    {
+                        "id": offer.details.get(offer_type="basic").pk,
+                        "offer_type": "standard",
+                        "title": "Mismatched detail",
+                    }
+                ]
+            },
+            format="json",
+        )
+        self.assertEqual(mismatched_update.status_code, 400)
         invalid_details = offer_payload()
         invalid_details["details"][0]["revisions"] = -2
         self.assertEqual(
