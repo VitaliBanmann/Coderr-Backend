@@ -26,6 +26,8 @@ def token_payload(user):
 
 
 class RegistrationView(generics.CreateAPIView):
+    """Register a user and return an authentication token."""
+
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny]
 
@@ -43,6 +45,8 @@ class RegistrationView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
+    """Authenticate a user and return an authentication token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -63,6 +67,8 @@ class LoginView(APIView):
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
+    """Retrieve a profile and allow its owner to update it."""
+
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
     queryset = User.objects.all()
@@ -70,6 +76,8 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 class ProfileListView(generics.ListAPIView):
+    """List profiles filtered by the requested user type."""
+
     permission_classes = [IsAuthenticated]
     pagination_class = None
 

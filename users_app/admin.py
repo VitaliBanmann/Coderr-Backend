@@ -6,6 +6,8 @@ from .models import User
 
 @admin.register(User)
 class CoderrUserAdmin(UserAdmin):
+    """Add Coderr profile fields to the Django user admin."""
+
     fieldsets = UserAdmin.fieldsets + (
         (
             "Coderr profile",

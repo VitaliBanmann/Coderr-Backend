@@ -6,6 +6,8 @@ from users_app.models import User
 
 
 class OrderApiTests(APITestCase):
+    """Test order endpoints and their role-based permissions."""
+
     def setUp(self):
         self.customer = User.objects.create_user(
             "order-customer", password="secure-pass", type=User.CUSTOMER

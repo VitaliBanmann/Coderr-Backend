@@ -23,12 +23,16 @@ def annotate_offer_aggregates(queryset):
 
 
 class OfferPagination(PageNumberPagination):
+    """Limit offer lists to a configurable number of results per page."""
+
     page_size = 6
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class OfferListCreateView(generics.ListCreateAPIView):
+    """List public offers and allow business users to create offers."""
+
     queryset = Offer.objects.select_related("user").prefetch_related("details")
     permission_classes = [AllowAny]
     pagination_class = OfferPagination
@@ -116,6 +120,8 @@ class OfferListCreateView(generics.ListCreateAPIView):
 
 
 class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, or delete an offer owned by the requester."""
+
     queryset = Offer.objects.select_related("user").prefetch_related("details")
     permission_classes = [IsAuthenticated, IsOfferOwnerOrReadOnly]
     http_method_names = ["get", "patch", "delete", "head", "options"]
@@ -130,6 +136,8 @@ class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OfferPackageDetailView(generics.RetrieveAPIView):
+    """Retrieve one offer package for an authenticated user."""
+
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
     permission_classes = [IsAuthenticated]

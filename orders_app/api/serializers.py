@@ -6,6 +6,8 @@ from orders_app.models import Order
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    """Serialize complete order records."""
+
     class Meta:
         model = Order
         fields = [
@@ -26,6 +28,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class CreateOrderSerializer(serializers.Serializer):
+    """Create an order from an existing offer package."""
+
     offer_detail_id = serializers.IntegerField()
 
     def validate_offer_detail_id(self, value):
@@ -57,6 +61,8 @@ class CreateOrderSerializer(serializers.Serializer):
 
 
 class OrderStatusSerializer(serializers.ModelSerializer):
+    """Allow updates only to an order's status."""
+
     class Meta:
         model = Order
         fields = OrderSerializer.Meta.fields

@@ -3,6 +3,8 @@ from django.db import models
 
 
 class Review(models.Model):
+    """A customer's review of a business user."""
+
     business_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -20,6 +22,8 @@ class Review(models.Model):
 
     class Meta:
         ordering = ["-updated_at"]
+        verbose_name = "review"
+        verbose_name_plural = "reviews"
         constraints = [
             models.UniqueConstraint(
                 fields=["business_user", "reviewer"],

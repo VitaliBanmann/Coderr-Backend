@@ -3,7 +3,11 @@ from django.db import models
 
 
 class Order(models.Model):
+    """An order that snapshots an offer package for its customer."""
+
     class Status(models.TextChoices):
+        """The available lifecycle states for an order."""
+
         IN_PROGRESS = "in_progress", "In progress"
         COMPLETED = "completed", "Completed"
         CANCELLED = "cancelled", "Cancelled"
@@ -34,6 +38,8 @@ class Order(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "order"
+        verbose_name_plural = "orders"
 
     def __str__(self):
         return f"{self.title} ({self.status})"

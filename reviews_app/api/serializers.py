@@ -5,6 +5,8 @@ from users_app.models import User
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Validate and serialize customer reviews."""
+
     reviewer = serializers.PrimaryKeyRelatedField(read_only=True)
     business_user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(type=User.BUSINESS),

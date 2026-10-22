@@ -5,6 +5,8 @@ from offers_app.models import Offer, OfferDetail
 
 
 class OfferDetailWriteSerializer(serializers.ModelSerializer):
+    """Validate writable fields for an offer package."""
+
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -37,6 +39,8 @@ class OfferDetailWriteSerializer(serializers.ModelSerializer):
 
 
 class OfferWriteSerializer(serializers.ModelSerializer):
+    """Create and update offers with their nested package details."""
+
     details = OfferDetailWriteSerializer(many=True, required=False)
 
     class Meta:
@@ -118,10 +122,14 @@ class OfferWriteSerializer(serializers.ModelSerializer):
 
     def _get_existing_detail(self, offer, data):
         detail_id = data.get("id")
-        offer_type = data.get("offer_type")
-        detail = self._find_existing_detail(offer, detail_id, offer_type)
-        if detail is not None:
-            return detail
+        detail = self._find_existing_detail(
+            offer, detail_id, data["offer_type"]
+        )
+        if detail is None:
+            self._raise_missing_detail_error(detail_id)
+        return detail
+
+    def _raise_missing_detail_error(self, detail_id):
         if detail_id:
             raise serializers.ValidationError(
                 {
@@ -144,6 +152,8 @@ class OfferWriteSerializer(serializers.ModelSerializer):
 
 
 class OfferDetailLinkSerializer(serializers.ModelSerializer):
+    """Serialize package references as API URLs."""
+
     url = serializers.SerializerMethodField()
 
     class Meta:
@@ -157,6 +167,8 @@ class OfferDetailLinkSerializer(serializers.ModelSerializer):
 
 
 class OfferListSerializer(serializers.ModelSerializer):
+    """Serialize offers with summary data for list and detail responses."""
+
     details = OfferDetailLinkSerializer(many=True, read_only=True)
     min_price = serializers.SerializerMethodField()
     min_delivery_time = serializers.SerializerMethodField()
@@ -193,6 +205,8 @@ class OfferListSerializer(serializers.ModelSerializer):
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):
+    """Serialize all fields of a single offer package."""
+
     class Meta:
         model = OfferDetail
         fields = [

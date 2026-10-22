@@ -3,6 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """A Coderr account with customer or business profile fields."""
+
     CUSTOMER = "customer"
     BUSINESS = "business"
     USER_TYPES = [(CUSTOMER, "Customer"), (BUSINESS, "Business")]
@@ -20,6 +22,8 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ["username"]
+        verbose_name = "user"
+        verbose_name_plural = "users"
 
     def __str__(self):
         return self.username

@@ -8,6 +8,8 @@ from users_app.models import User
 
 
 class AuthenticationAndProfileTests(APITestCase):
+    """Test authentication and profile API behavior."""
+
     def test_registration_and_login_return_token(self):
         response = self.client.post(
             "/api/registration/",

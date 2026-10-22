@@ -9,6 +9,8 @@ from users_app.models import User
 
 
 class BaseInfoView(APIView):
+    """Return public counts and rating statistics for the platform."""
+
     permission_classes = [AllowAny]
 
     def get(self, request):

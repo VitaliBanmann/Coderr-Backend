@@ -16,13 +16,21 @@ py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed_demo
 python manage.py runserver
 ```
 
 The API is available at `http://127.0.0.1:8000/api/`; the Django admin is at `http://127.0.0.1:8000/admin/`.
 
-The optional `seed_demo` command creates the frontend's local guest accounts:
+## Optional demo data
+
+The `seed_demo` command is optional. Run it only when you want local sample
+accounts and offers for development:
+
+```powershell
+python manage.py seed_demo
+```
+
+It creates the frontend's local guest accounts:
 
 - Customer: `andrey` / `asdasd`
 - Business: `kevin` / `asdasd24`
@@ -48,9 +56,6 @@ All routes use the `/api/` prefix. Token authentication uses the `Authorization:
 | Platform statistics | `GET base-info/` |
 
 The offer list uses page-number pagination with six results per page by default; `page_size` can request up to 100 results per page. See [`docs/api-contracts.md`](docs/api-contracts.md) for the implemented request and permission rules.
-
-A Postman example for the offer package PATCH request is available at
-[`docs/postman/Coderr-Offer-PATCH.postman_collection.json`](docs/postman/Coderr-Offer-PATCH.postman_collection.json).
 
 ## Tests and migrations
 

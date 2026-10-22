@@ -5,6 +5,8 @@ from users_app.models import User
 
 
 class ReviewApiTests(APITestCase):
+    """Test review endpoints, validation, and permissions."""
+
     def setUp(self):
         self.customer = User.objects.create_user(
             "review-customer", password="secure-pass", type=User.CUSTOMER
@@ -84,7 +86,7 @@ class ReviewApiTests(APITestCase):
         denied_delete = self.client.delete(f"/api/reviews/{review.pk}/")
         self.assertEqual(denied_delete.status_code, 403)
 
-    def test_reviews_are_filterable_and_base_info_is_public(self):
+    def test_reviews_are_filterable(self):
         Review.objects.create(
             reviewer=self.customer,
             business_user=self.business,
@@ -98,10 +100,6 @@ class ReviewApiTests(APITestCase):
         )
         self.assertEqual(filtered.status_code, 200)
         self.assertEqual(len(filtered.data), 1)
-        self.client.force_authenticate(user=None)
-        stats = self.client.get("/api/base-info/")
-        self.assertEqual(stats.status_code, 200)
-        self.assertEqual(stats.data["average_rating"], 5.0)
 
     def test_review_filters_and_rating_validation(self):
         self.client.force_authenticate(self.customer)
@@ -132,9 +130,4 @@ class ReviewApiTests(APITestCase):
         self.assertEqual(
             self.client.delete(f"/api/reviews/{review.pk}/").status_code,
             204,
-        )
-        self.client.force_authenticate(user=None)
-        self.assertEqual(
-            self.client.get("/api/base-info/").data["average_rating"],
-            0.0,
         )

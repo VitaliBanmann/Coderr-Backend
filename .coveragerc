@@ -2,6 +2,7 @@
 branch = True
 source =
     core
+    base_info_app
     users_app
     offers_app
     orders_app

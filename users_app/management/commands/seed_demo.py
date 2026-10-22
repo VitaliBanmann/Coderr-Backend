@@ -32,6 +32,8 @@ PACKAGE_TYPES = ("basic", "standard", "premium")
 
 
 class Command(BaseCommand):
+    """Create repeatable demo users, offers, and package details."""
+
     help = "Create local-only Coderr demo accounts and sample offers."
 
     def handle(self, *args, **options):

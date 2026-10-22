@@ -27,6 +27,8 @@ def offer_payload():
 
 
 class OfferApiTests(APITestCase):
+    """Test offer creation, filtering, detail, and update behavior."""
+
     def setUp(self):
         self.business = User.objects.create_user(
             "offer-owner", password="secure-pass", type=User.BUSINESS

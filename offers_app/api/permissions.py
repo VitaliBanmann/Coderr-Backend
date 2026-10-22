@@ -2,6 +2,8 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsBusinessUser(BasePermission):
+    """Allow requests from authenticated business users."""
+
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated
@@ -10,6 +12,8 @@ class IsBusinessUser(BasePermission):
 
 
 class IsOfferOwnerOrReadOnly(BasePermission):
+    """Allow safe reads or writes by the offer owner."""
+
     def has_object_permission(self, request, view, offer):
         return (
             request.method in SAFE_METHODS

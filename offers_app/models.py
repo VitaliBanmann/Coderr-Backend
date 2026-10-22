@@ -3,6 +3,8 @@ from django.db import models
 
 
 class Offer(models.Model):
+    """A service offer published by a business user."""
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -16,13 +18,19 @@ class Offer(models.Model):
 
     class Meta:
         ordering = ["-updated_at"]
+        verbose_name = "offer"
+        verbose_name_plural = "offers"
 
     def __str__(self):
         return self.title
 
 
 class OfferDetail(models.Model):
+    """A priced package belonging to an offer."""
+
     class OfferType(models.TextChoices):
+        """The supported package tiers."""
+
         BASIC = "basic", "Basic"
         STANDARD = "standard", "Standard"
         PREMIUM = "premium", "Premium"
@@ -39,6 +47,8 @@ class OfferDetail(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "offer detail"
+        verbose_name_plural = "offer details"
         constraints = [
             models.UniqueConstraint(
                 fields=["offer", "offer_type"],

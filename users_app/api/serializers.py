@@ -9,6 +9,8 @@ from users_app.models import User
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """Validate and create a new Coderr user account."""
+
     repeated_password = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
 
@@ -42,6 +44,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """Serialize a profile for retrieval and owner-only updates."""
+
     user = serializers.IntegerField(source="pk", read_only=True)
     created_at = serializers.DateTimeField(
         source="date_joined", read_only=True
@@ -76,6 +80,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class BusinessProfileListSerializer(serializers.ModelSerializer):
+    """Serialize business profiles for the public profile list."""
+
     user = serializers.IntegerField(source="pk", read_only=True)
     file = serializers.ImageField(source="profile_image", read_only=True)
 
@@ -96,6 +102,8 @@ class BusinessProfileListSerializer(serializers.ModelSerializer):
 
 
 class CustomerProfileListSerializer(serializers.ModelSerializer):
+    """Serialize customer profiles including image upload time."""
+
     user = serializers.IntegerField(source="pk", read_only=True)
     file = serializers.ImageField(source="profile_image", read_only=True)
     uploaded_at = serializers.SerializerMethodField()

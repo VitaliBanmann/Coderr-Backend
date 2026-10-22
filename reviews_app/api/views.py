@@ -8,6 +8,8 @@ from reviews_app.models import Review
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
+    """List reviews and allow eligible customers to create one."""
+
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
     queryset = Review.objects.select_related("business_user", "reviewer")
@@ -49,6 +51,8 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 
 
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, or delete a review according to author permissions."""
+
     queryset = Review.objects.select_related("business_user", "reviewer")
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated, IsReviewAuthorOrReadOnly]

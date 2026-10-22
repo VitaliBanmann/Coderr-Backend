@@ -20,6 +20,8 @@ from users_app.models import User
 
 
 class OrderListCreateView(generics.ListCreateAPIView):
+    """List a user's orders and let customers place new orders."""
+
     permission_classes = [IsAuthenticated]
     pagination_class = None
 
@@ -52,6 +54,8 @@ class OrderListCreateView(generics.ListCreateAPIView):
 
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, or delete an order according to user permissions."""
+
     queryset = Order.objects.select_related("customer_user", "business_user")
     permission_classes = [IsAuthenticated]
     http_method_names = ["get", "patch", "delete", "head", "options"]
@@ -70,6 +74,8 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class BusinessOrderCountView(APIView):
+    """Return the number of orders in the configured status for a business."""
+
     permission_classes = [IsAuthenticated]
     response_key = "order_count"
     order_status = Order.Status.IN_PROGRESS
@@ -86,5 +92,7 @@ class BusinessOrderCountView(APIView):
 
 
 class CompletedOrderCountView(BusinessOrderCountView):
+    """Return the completed-order count for a business."""
+
     response_key = "completed_order_count"
     order_status = Order.Status.COMPLETED
