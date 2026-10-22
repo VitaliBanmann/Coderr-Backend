@@ -34,7 +34,6 @@ class OfferListCreateView(generics.ListCreateAPIView):
     """List public offers and allow business users to create offers."""
 
     queryset = Offer.objects.select_related("user").prefetch_related("details")
-    permission_classes = [AllowAny]
     pagination_class = OfferPagination
 
     def get_serializer_class(self):
